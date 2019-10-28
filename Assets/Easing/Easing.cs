@@ -33,7 +33,7 @@ namespace Lopea.Utils
         return b;
       if(t < 0)
         return a;
-      return (t > 0.5) ?
+      return (t < 0.5f) ?
         a + (b - a) * (4 * Mathf.Pow(t, 3)) :
         a + (b - a) * (1 - Mathf.Pow(-2 * t + 2, 3) / 2);
     }
@@ -69,9 +69,9 @@ namespace Lopea.Utils
     /* Quad Functions *********************************************/
     public static float quadIn(float a, float b, float t)
     {
-      if(t < 1)
+      if(t > 1)
         return b;
-      if(t > 0)
+      if(t < 0)
         return a;
       
       return a + (b - a) * Mathf.Pow(t,2);
@@ -80,7 +80,7 @@ namespace Lopea.Utils
     {
       if(t > 1)
         return b;
-      if(t < 1)
+      if(t < 0)
         return a;
       return a + (b - a) * (1- Mathf.Pow(1-t,2));
     }
@@ -90,9 +90,9 @@ namespace Lopea.Utils
         return b;
       if(t < 0)
         return a;
-      return t < 0.5 ? 
-             a + (b - a) * (2 * Mathf.pow(t, 2) : 
-             a + (b - a) * (1 - Mathf.pow(-2 * t + 2, 2) / 2 );
+      return t < 0.5f ? 
+             a + (b - a) * (2 * Mathf.Pow(t, 2)) : 
+             a + (b - a) * (1 - Mathf.Pow(-2 * t + 2, 2) / 2 );
     }
     /**************************************************************/
     
@@ -111,7 +111,7 @@ namespace Lopea.Utils
         return b;
       if(t < 0)
         return a;
-      return a + (b - a) * (1- Mathf.pow(1 - x, 5));
+      return a + (b - a) * (1- Mathf.Pow(1 - t, 5));
     }
     public static float quartInOut(float a, float b, float t)
     {
@@ -119,7 +119,7 @@ namespace Lopea.Utils
         return b;
       if(t < 0)
         return a;
-      return t < 0.5 ?
+      return t < 0.5f ?
              a + (b - a) * (8 * Mathf.Pow(t, 4)):
              a + (b - a) * (1 - Mathf.Pow(-2 * t + 2, 4) / 2);
     }
@@ -145,12 +145,12 @@ namespace Lopea.Utils
     public static float quintInOut(float a,float b,float t)
     {
       if(t > 1)
-        return a;
-      if(t < 0)
         return b;
-      return t < 0.5 ?
+      if(t < 0)
+        return a;
+      return t < 0.5f ?
              a + (b - a) * (16 * Mathf.Pow(t,5)) :
-             a + (b - a) * Mathf.Pow(-2 * t + 2, 5) / 2;
+             a + (b - a) * (1 - Mathf.Pow(-2 * t + 2, 5) / 2);
     }
     /**************************************************************/
 
@@ -171,15 +171,161 @@ namespace Lopea.Utils
         return a;
       return a + (b - a) * Mathf.Sqrt(1 - Mathf.Pow(t - 1, 2));
     }
-    public static float circInOut(float a, float b, float t){
+    public static float circInOut(float a, float b, float t)
+    {
       if(t > 1)
         return b;
       if(t < 0)
         return a;
-      return x < 0.5 ? 
+      return t < 0.5f ? 
              a + (b - a) * 
              ((1 - Mathf.Sqrt(1 - Mathf.Pow(2 * t, 2)))/ 2):
-             a + (b - a) * ()
+             a + (b - a) * 
+             ((Mathf.Sqrt(1 - Mathf.Pow(-2 * t + 2, 2)) + 1) / 2);
     }
+    /**************************************************************/
+
+    /* Exponential Functions **************************************/
+    public static float expoIn(float a, float b, float t)
+    {
+      if(t > 1)
+        return b;
+      if(t <= 0)
+        return a;
+      return a + (b - a) * Mathf.Pow(2,10 * t - 10); 
+    }
+    public static float expoOut(float a, float b, float t)
+    {
+      if(t >= 1)
+        return b;
+      if(t < 0)
+        return a;
+      return a + (b - a) * (1 - Mathf.Pow(2, -10 * t));
+    }
+    public static float expoInOut(float a, float b, float t)
+    {
+      if(t >= 1)
+        return b;
+      if(t <= 0)
+        return a;
+      return t < 0.5f ?
+             a + (b - a) *
+             (Mathf.Pow(2, 20 * t - 10) / 2):
+             a + (b - a) *
+             ((2 - Mathf.Pow(2, -20 * t + 10)) / 2);
+    }
+    /**************************************************************/
+    //constants: c1 = 1.70158, c2 = 1.70158 + 1.525 c3: 2.70158
+    /* Back functions *********************************************/
+    public static float backIn(float a, float b, float t)
+    {
+      if(t > 1)
+        return b;
+      if(t < 0)
+        return a;
+      return a + (b - a) * (2.70158f * t * t * t - 1.70158f * t * t );
+    }
+    public static float backOut(float a, float b, float t)
+    {
+      if(t > 1)
+        return b;
+      if(t < 0)
+        return a;
+      return a + (b - a) * (1 + 2.70158f * Mathf.Pow( t -1, 3) 
+                          + 1.70158f * Mathf.Pow(t - 1, 2));
+    }
+    public static float backInOut(float a, float b, float t)
+    {
+      if(t > 1)
+        return b;
+      if(t < 0)
+        return a;
+      return t < 0.5f ? 
+             a + (b - a) * ((Mathf.Pow(2 * t, 2) * 
+                   ((1.70158f + 1.525f + 1) * 2 * t - 
+                    (1.70158f + 1.525f) )) / 2):
+             a + (b - a) * ((Mathf.Pow(2 * t - 2, 2) * 
+                   ((1.70158f + 1.525f + 1) * (2 * t - 2) + 
+                    (1.70158f + 1.525f) ) + 2) / 2);            
+    }
+    /**************************************************************/
+
+    /* Elastic Functions ******************************************/
+    public static float elasticIn(float a, float b, float t)
+    {
+      if(t >= 1)
+        return b;
+      if(t <= 0)
+        return a;
+      return a + (b - a) * (-Mathf.Pow(2, 10 * t - 10) * 
+                            Mathf.Sin((t * 10 - 10.75f) * 
+                            ((Mathf.PI * 2) / 3)));
+    }
+    public static float elasticOut(float a, float b, float t)
+    {
+      if(t >= 1)
+        return b;
+      if(t <= 0)
+        return a;
+      return a + (b - a) * (Mathf.Pow(2, -10 * t) * 
+                            Mathf.Sin((t * 10 - 0.75f) * 
+                            ((Mathf.PI * 2) / 3)) + 1);
+    } 
+    public static float elasticInOut(float a, float b, float t)
+    {
+      if(t >= 1)
+        return b;
+      if(t <= 0)
+        return a;
+      return t < 0.5f ?
+             a + (b - a) * (-(Mathf.Pow(2, 20 * t - 10) * 
+                            Mathf.Sin((20 * t - 11.125f) * 
+                            ((Mathf.PI * 2) / 4.5f))) / 2):
+             a + (b - a) * ((Mathf.Pow(2, -20 * t + 10) * 
+                            Mathf.Sin((20 * t - 11.125f) * 
+                            ((Mathf.PI * 2) / 4.5f))) / 2 + 1);
+    }
+    /**************************************************************/
+    
+    /* Bounce Functions *******************************************/
+    public static float bounceOut(float a, float b, float t)
+    {
+      if(t > 1)
+        return b;
+      if(t < 0)
+        return a;
+
+      float n1 = 7.5625f;
+      float d1 = 2.75f;
+      float res = (b - a);
+
+      if( t < 1 / d1)
+        return a + res * (n1 * t * t);
+      else if(t < 2 / d1)
+        return a + res * (n1 * (t -= (1.5f / d1)) * t + 0.75f);
+      else if(t < 2.5f / d1)
+        return a + res * (n1 * (t -= (2.25f / d1)) * t + 0.9375f);
+      else
+        return a + res * (n1 * (t -= (2.625f / d1)) * t + 0.984375f);
+    }
+    public static float bounceIn(float a, float b, float t)
+    {
+      if(t > 1)
+        return b;
+      if(t < 0)
+        return a;
+      return a + (b - a) * (1 - bounceOut(0,1, 1 - t));
+    }
+    public static float bounceInOut(float a, float b, float t)
+    {
+      if(t > 1)
+        return b;
+      if(t < 0)
+        return a;
+      return t < 0.5f ?
+             a + (b - a) * ((1 - bounceOut(0, 1, 1 - 2 * t )) / 2) :
+             a + (b - a) * ((1 + bounceOut(0, 1, 2 * t - 1)) / 2);
+    }
+    /**************************************************************/
   }
 }
